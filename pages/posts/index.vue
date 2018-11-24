@@ -1,6 +1,6 @@
 <template>
   <div class="posts-page">
-<PostList/>
+    <PostList :posts="loadedPosts"/>
   </div>
 </template>
 
@@ -12,6 +12,16 @@
     components: {
       PostList,
     },
+    fetch(context) {
+      if (context.store.state.loadedPosts.length > 0) {
+        return null
+      }
+    },
+    computed: {
+      loadedPosts() {
+        return this.$store.getters.loadedPosts
+      }
+    }
   }
 </script>
 

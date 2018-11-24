@@ -1,25 +1,13 @@
 <template>
   <section class="post-list">
     <PostPreview
-      id="1"
+      v-for="post of posts"
+      :key="post.id"
+      :id="post.id"
       :is-admin="isAdmin"
-      title="My Awesome Title"
-      previewText="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio, temporibus?"
-      thumbnail="https://static.techspot.com/images2/news/bigimage/2018/07/2018-07-10-image-35.jpg"
-    />
-    <PostPreview
-      id="2"
-      :is-admin="isAdmin"
-      title="My Awesome Title"
-      previewText="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio, temporibus?"
-      thumbnail="https://static.techspot.com/images2/news/bigimage/2018/07/2018-07-10-image-35.jpg"
-    />
-    <PostPreview
-      id="3"
-      :is-admin="isAdmin"
-      title="My Awesome Title"
-      previewText="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio, temporibus?"
-      thumbnail="https://static.techspot.com/images2/news/bigimage/2018/07/2018-07-10-image-35.jpg"
+      :title="post.title"
+      :previewText="post.previewText"
+      :thumbnail="post.thumbnail"
     />
   </section>
 </template>
@@ -33,6 +21,10 @@
       isAdmin: {
         type: Boolean,
         default: false
+      },
+      posts: {
+        type: Array,
+        required: true
       }
     },
     components: {
