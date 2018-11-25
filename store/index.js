@@ -1,5 +1,4 @@
 import Vuex from 'vuex'
-import axios from 'axios'
 
 const createStore = () => {
   return new Vuex.Store({
@@ -20,13 +19,13 @@ const createStore = () => {
     },
     actions: {
       nuxtServerInit({ commit }, context) {
-        return axios
-          .get('https://nuxt-app-ac0bc.firebaseio.com/posts.json')
-          .then(res => {
+        return context.app.$axios
+          .$get('posts.json')
+          .then(data => {
             const postsArray = []
-            for (const key of Object.keys(res.data)) {
+            for (const key of Object.keys(data)) {
               postsArray.push({
-                ...res.data[key],
+                ...data[key],
                 id: key,
               })
             }
@@ -42,20 +41,20 @@ const createStore = () => {
           ...post,
           updatedDate: new Date(),
         }
-        return axios
-          .post('https://nuxt-app-ac0bc.firebaseio.com/posts.json', createdPost)
-          .then((result) => {
+        return this.$axios
+          .$post('posts.json', createdPost)
+          .then((data) => {
             commit('addPost', {
               ...createdPost,
-              id: result.data.name,
+              id: data.name,
             })
             this.$router.push('/admin')
           })
           .catch(error => console.log(error))
       },
       editPost({ commit }, editedPost) {
-        return axios
-          .put(`https://nuxt-app-ac0bc.firebaseio.com/posts/${ editedPost.id }.json`, editedPost)
+        return this.$axios
+          .$put(`posts/${ editedPost.id }.json`, editedPost)
           .then(() => commit('editPost', editedPost))
           .catch(error => console.log(error))
       },
