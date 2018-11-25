@@ -1,4 +1,5 @@
 import Vuex from 'vuex'
+import axios from 'axios'
 
 const createStore = () => {
   return new Vuex.Store({
@@ -9,37 +10,54 @@ const createStore = () => {
       setPosts(state, posts) {
         state.loadedPosts = posts
       },
+      addPost(state, post) {
+        state.loadedPosts.push(post)
+      },
+      editPost(state, editedPost) {
+        const postIndex = state.loadedPosts.findIndex(el => el.id === editedPost.id)
+        state.loadedPosts[postIndex] = editedPost
+      },
     },
     actions: {
-      nuxtServerInit({ commit }) {
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            commit('setPosts', [
-              {
-                id: '1',
-                title: 'First Post',
-                previewText: 'This is our first post',
-                thumbnail: 'https://previews.123rf.com/images/elen1/elen11704/elen1170400248/75919754-placa-de-circuito-la-tecnolog%C3%ADa-electr%C3%B3nica-hardware-del-equipo-chips-digitales-placa-base-fondo-tech-pro.jpg',
-              },
-              {
-                id: '2',
-                title: 'Second Post',
-                previewText: 'This is our second post',
-                thumbnail: 'https://previews.123rf.com/images/elen1/elen11704/elen1170400248/75919754-placa-de-circuito-la-tecnolog%C3%ADa-electr%C3%B3nica-hardware-del-equipo-chips-digitales-placa-base-fondo-tech-pro.jpg',
-              },
-              {
-                id: '3',
-                title: 'Third Post',
-                previewText: 'This is our third post',
-                thumbnail: 'https://previews.123rf.com/images/elen1/elen11704/elen1170400248/75919754-placa-de-circuito-la-tecnolog%C3%ADa-electr%C3%B3nica-hardware-del-equipo-chips-digitales-placa-base-fondo-tech-pro.jpg',
-              },
-            ])
-            resolve()
-          }, 1500)
-        })
+      nuxtServerInit({ commit }, context) {
+        return axios
+          .get('https://nuxt-app-ac0bc.firebaseio.com/posts.json')
+          .then(res => {
+            const postsArray = []
+            for (const key of Object.keys(res.data)) {
+              postsArray.push({
+                ...res.data[key],
+                id: key,
+              })
+            }
+            commit('setPosts', postsArray)
+          })
+          .catch(error => context.error(error))
       },
       setPosts({ commit }, posts) {
         commit('setPosts', posts)
+      },
+      addPost({ commit }, post) {
+        const createdPost = {
+          ...post,
+          updatedDate: new Date(),
+        }
+        return axios
+          .post('https://nuxt-app-ac0bc.firebaseio.com/posts.json', createdPost)
+          .then((result) => {
+            commit('addPost', {
+              ...createdPost,
+              id: result.data.name,
+            })
+            this.$router.push('/admin')
+          })
+          .catch(error => console.log(error))
+      },
+      editPost({ commit }, editedPost) {
+        return axios
+          .put(`https://nuxt-app-ac0bc.firebaseio.com/posts/${ editedPost.id }.json`, editedPost)
+          .then(() => commit('editPost', editedPost))
+          .catch(error => console.log(error))
       },
     },
     getters: {

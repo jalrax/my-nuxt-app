@@ -15,22 +15,18 @@
 </template>
 
 <script>
+  import axios from 'axios'
+
   export default {
     name: 'index',
-    asyncData(context, callback) {
-      setTimeout(() => {
-        callback(null, {
-          loadedPost: {
-            id: '1',
-            title: 'First Post (ID: ' + context.route.params.id + ')',
-            previewText: 'This is our first post',
-            author: 'Serge',
-            updatedDate: new Date(),
-            content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, voluptatem.',
-            thumbnail: 'https://previews.123rf.com/images/elen1/elen11704/elen1170400248/75919754-placa-de-circuito-la-tecnolog%C3%ADa-electr%C3%B3nica-hardware-del-equipo-chips-digitales-placa-base-fondo-tech-pro.jpg',
-          },
+    asyncData(context) {
+      return axios.get(`https://nuxt-app-ac0bc.firebaseio.com/posts/${context.params.id}.json`)
+        .then(res => {
+          return {
+            loadedPost: res.data
+          }
         })
-      }, 1500)
+        .catch(error => context.error(error))
     },
   }
 </script>
