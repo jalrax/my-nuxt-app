@@ -13,6 +13,7 @@
   export default {
     name: 'index',
     layout: 'admin',
+    middleware: ['check-auth', 'auth'],
     components: {
       AdminPostForm,
     },

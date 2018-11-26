@@ -63,5 +63,8 @@ module.exports = {
   transition: {
     name: 'fade',
     mode: 'out-in'
+  },
+  env: {
+    fbAPIKey: 'AIzaSyAdS89o5BH29ycx6ufgHi2AxGh9xQwi-rk'
   }
 }
