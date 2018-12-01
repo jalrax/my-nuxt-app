@@ -35,6 +35,9 @@
             password: this.password,
           })
           .then(() => this.$router.push('/admin'))
+          .then(() => {
+            return this.$axios.$post('http://localhost:3000/api/track-data', {data: 'Hello there!'})
+          })
       },
     },
     data() {
